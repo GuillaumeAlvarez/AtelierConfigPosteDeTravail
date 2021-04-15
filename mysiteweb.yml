@@ -1,0 +1,24 @@
+---
+- hosts: LOCALSERVER
+  become: true
+  vars:
+    image_name: mysiteweb
+    image_tag: v1
+  tasks:
+    - name: Build Image
+      docker_image:
+        build:
+          path: "{{ pathbuild }}"
+          pull: yes
+        name: "{{ image_name }}"
+        tag: "{{ image_tag }}"
+        source: build
+
+    - name: Create Container
+      docker_container:
+           name: "{{ image_name }}"
+           image: "{{ image_name }}:{{ image_tag }}"
+           ports:
+            -  "80:80"
+           state: started
+           detach: yes
